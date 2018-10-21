@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.returm.front.management.common.mapper.AppFileMapper">
+
+    <select id="checkUpdate" parameterType="AppFileEntity" resultType="AppFileResEntity">
+        SELECT /* AppFileMapper.xml, selectAppFileInfo */
+            APP_FILE_VER_CODE                                   AS appVerCode,
+            APP_FILE_VER                                        AS appVerName,
+            CASE WHEN APP_FILE_VER_CODE = #{appVerCode}
+                THEN 'N'
+                ELSE 'Y' END                                    AS appUpdate,
+            CASE WHEN APP_MUST_UPDATE_CNT <![CDATA[ >= 1 ]]>
+                THEN 'Y'
+                ELSE 'N' END                                    AS appMustUpdate
+        FROM (
+            SELECT APP_FILE_VER_CODE
+                   APP_FILE_VER
+                   ( SELECT COUNT(1) AS CNT
+                     FROM RT_APP_FILE_INFO M
+                     WHERE M.APP_MUST_UPDATE = 'Y'
+                     AND   M.APP_FILE_VER_CODE <![CDATA[ > ]]> #{appVerCode} ) AS APP_MUST_UPDATE_CNT )
+            FROM   RT_APP_FILE_INFO A
+            WHERE  APP_FILE_VER_CODE <![CDATA[ >= ]]> #{appVerCode}
+            AND    DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') BETWEEN APP_FILE_DIST_START_DT AND APP_FILE_DIST_END_DT
+            ORDER BY APP_FILE_VER_CODE DESC
+            LIMIT 1
+        ) V
+    </select>
+
+</mapper>

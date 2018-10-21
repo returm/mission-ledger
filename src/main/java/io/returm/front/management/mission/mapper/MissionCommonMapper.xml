@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.returm.front.management.mission.mapper.MissionCommonMapper">
+
+    <sql id="field">
+        A.COMMON_SEQ                              AS commonSeq,
+        A.CONTENTS                                AS contents,
+        A.INSERT_DT                               AS insertDt,
+        A.INSERT_ID                               AS insertId,
+        A.UPDATE_DT                               AS updateDt,
+        A.UPDATE_ID                               AS updateId
+    </sql>
+
+    <sql id="fragment">
+        FROM RT_MISSION_COMMON_INFO A
+        <where>
+            <trim prefixOverrides="AND|OR">
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(missionSeq)">
+                    AND A.MISSION_SEQ = #{missionSeq}
+                </if>
+            </trim>
+        </where>
+    </sql>
+
+    <select id="get" resultType="MissionCommonEntity">
+        SELECT /* MissionMapper.xml, get */
+        <include refid="io.returm.front.management.mission.mapper.MissionCommonMapper.field" />
+        <include refid="io.returm.front.management.mission.mapper.MissionCommonMapper.fragment" />
+        ORDER BY A.COMMON_SEQ DESC
+        LIMIT 1
+    </select>
+
+</mapper>

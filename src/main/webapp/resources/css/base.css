@@ -1,0 +1,25 @@
+body		{margin:0px; padding:0px; background:#fff; font:14px sans-serif bold;}
+input		{outline:none; text-decoration:none;}
+
+#main		{margin: 0px; padding: 0px;min-height: 750px;}
+#content	{margin-left: 5%;margin-top: 10px; width: 1150px; vertical-align: middle;}
+#contextHeader		{padding: 0px;vertical-align: bottom;text-align: center;}
+#body		{padding: 10px;vertical-align: top;}
+
+#comboBox, #inputBox {vertical-align:middle;}
+#service	{width: 380px;margin: 15px 0 10px 0;border: 1px solid #999;background-color: #eee;}
+#testBtn	{width: 50px;margin: 10px 0 10px 0;border: 1px solid #999;background-color: #eee;}
+
+#dataTable	{ width:100%;padding:0px;margin:0px;}
+#dataTable tr { width:100%;padding:0px;margin:0px;}
+#dataTable td { width:50%;padding:0px;margin:0px;}
+
+#reqText, #resText {width:97%;min-height:300px;border: 1px #999 solid;padding: 5px;display:block;}
+
+.reqHeaderText, .resHeaderText	{ width:97%;min-height:95px;border: 1px #999 solid;padding: 5px;display:block;}
+.headerbox						{ height: 180px; text-align: left; line-height: 25px; overflow: scroll; overflow-x: hidden; }
+.spanBtn						{ width: 110px; float: right; margin-left: -115px; margin-right: 5px; text-align: right;}
+.addHeaderBtn					{ color: gray; border: black solid 1px; margin-left: 5px; }
+.delHeaderBtn					{ color: gray; border: black solid 1px; margin-left: 5px; }
+.headerTextBox					{ width: 480px; margin-bottom: 3px; }
+.topContent						{ min-height: 310px;vertical-align:top; }

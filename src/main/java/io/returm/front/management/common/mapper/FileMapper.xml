@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.returm.front.management.common.mapper.FileMapper">
+
+    <sql id="field">
+        A.FILE_SQ                                                      AS fileSq,                       /* 파일등록순번 */
+        A.FILE_SIZE                                                    AS fileSize,                     /* 파일크기 */
+        A.FILE_EXT                                                     AS fileExt,                      /* 파일종류 */
+        A.FILE_PATH                                                    AS filePath,                     /* 파일위치 */
+        A.HANDLE_FILE_NM                                               AS handleFileNm,                 /* 핸들파일명 */
+        A.ORG_FILE_NM                                                  AS orgFileNm,                    /* 원본파일명 */
+        A.ALT_TEXT                                                     AS altText,                      /* ALT_TEXT */
+        A.DEL_YN                                                       AS delYn,                        /* 삭제여부 */
+        A.INSERT_DT                                                    AS insertDt,                     /* 등록일시 */
+        A.INSERT_ID                                                    AS insertId                      /* 등록자 */
+    </sql>
+
+    <sql id="fragment">
+        FROM CM_FILE_INFO A
+        <where>
+            <trim prefixOverrides="AND|OR">
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(fileSq)">
+                    AND A.FILE_SQ = #{fileSq}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(fileSize)">
+                    AND A.FILE_SIZE = #{fileSize}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(fileExt)">
+                    AND A.FILE_EXT = #{fileExt}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(filePath)">
+                    AND A.FILE_PATH = #{filePath}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(handleFileNm)">
+                    AND A.HANDLE_FILE_NM = #{handleFileNm}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(orgFileNm)">
+                    AND A.ORG_FILE_NM = #{orgFileNm}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(altText)">
+                    AND A.ALT_TEXT = #{altText}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(delYn)">
+                    AND A.DEL_YN = #{delYn}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(insertDt)">
+                    AND A.INSERT_DT = #{insertDt}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(insertId)">
+                    AND A.INSERT_ID = #{insertId}
+                </if>
+            </trim>
+        </where>
+    </sql>
+
+    <!-- get - 조회 -->
+    <select id="get" parameterType="FileEntity" resultType="FileEntity">
+        SELECT /* FileMapper.xml, get */
+        <include refid="io.returm.front.management.common.mapper.FileMapper.field"/>
+        <include refid="io.returm.front.management.common.mapper.FileMapper.fragment"/>
+    </select>
+
+    <!-- list - 리스트 -->
+    <select id="getList" parameterType="FileEntity" resultType="FileEntity">
+        <include refid="Common.PagingStart" />
+        SELECT /* FileMapper.xml, getList */
+        <include refid="io.returm.front.management.common.mapper.FileMapper.field"/>
+        <include refid="io.returm.front.management.common.mapper.FileMapper.fragment"/>
+        ORDER BY   A.FILE_SQ  DESC
+        <include refid="Common.PagingEnd" />
+    </select>
+
+    <!-- all list - 전체 리스트 -->
+    <select id="getAllList" parameterType="FileEntity" resultType="FileEntity">
+        SELECT /* FileMapper.xml, getAllList */
+        <include refid="io.returm.front.management.common.mapper.FileMapper.field"/>
+        <include refid="io.returm.front.management.common.mapper.FileMapper.fragment"/>
+        ORDER BY   A.FILE_SQ  DESC
+    </select>
+
+    <!-- count - 카운트 -->
+    <select id="count" parameterType="FileEntity" resultType="Integer">
+        SELECT /* FileMapper.xml, count */
+        COUNT(1) AS CNT
+        <include refid="io.returm.front.management.common.mapper.FileMapper.fragment"/>
+    </select>
+
+
+    <!-- insert - 등록 -->
+    <insert id="insert" parameterType="FileEntity" useGeneratedKeys="true" keyProperty="fileSq">
+        INSERT	/* FileMapper.xml, insert */
+          INTO	CM_FILE_INFO (
+            FILE_SIZE,                                                  /* 파일크기 */
+            FILE_EXT,                                                   /* 파일종류 */
+            FILE_PATH,                                                  /* 파일위치 */
+            HANDLE_FILE_NM,                                             /* 핸들파일명 */
+            ORG_FILE_NM,                                                /* 원본파일명 */
+            ALT_TEXT,                                                   /* ALT_TEXT */
+            DEL_YN,                                                     /* 삭제여부 */
+            INSERT_DT,                                                  /* 등록일시 */
+            INSERT_ID                                                   /* 등록자 */
+        ) VALUES (
+            #{fileSize},                                                /* 파일크기 */
+            #{fileExt},                                                 /* 파일종류 */
+            #{filePath},                                                /* 파일위치 */
+            #{handleFileNm},                                            /* 핸들파일명 */
+            #{orgFileNm},                                               /* 원본파일명 */
+            #{altText},                                                 /* ALT_TEXT */
+            #{delYn},                                                   /* 삭제여부 */
+            NOW(),                                                    /* 등록일시 */
+            #{loginIDInSession}                                         /* 등록자 */
+        )
+    </insert>
+
+    <!-- update - 수정 -->
+    <update id="update" parameterType="FileEntity">
+        UPDATE  /* FileMapper.xml, update */
+            CM_FILE_INFO
+        SET
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(fileSize)">
+            , FILE_SIZE = #{fileSize}
+        </if>
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(fileExt)">
+            , FILE_EXT = #{fileExt}
+        </if>
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(filePath)">
+            , FILE_PATH = #{filePath}
+        </if>
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(handleFileNm)">
+            , HANDLE_FILE_NM = #{handleFileNm}
+        </if>
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(orgFileNm)">
+            , ORG_FILE_NM = #{orgFileNm}
+        </if>
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(altText)">
+            , ALT_TEXT = #{altText}
+        </if>
+        <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(delYn)">
+            , DEL_YN = #{delYn}
+        </if>
+        WHERE   FILE_SQ = #{fileSq}
+    </update>
+
+    <!-- delete - 삭제 -->
+    <delete id="delete" parameterType="FileEntity">
+        DELETE	/* FileMapper.xml, delete */
+        FROM	CM_FILE_INFO
+        WHERE   FILE_SQ = #{fileSq}
+    </delete>
+</mapper>

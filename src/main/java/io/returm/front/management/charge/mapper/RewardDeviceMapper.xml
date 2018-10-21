@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.returm.front.management.charge.mapper.RewardDeviceMapper">
+
+    <sql id="field">
+        A.INFO_SEQ                                AS infoSeq,
+        A.MISSION_SEQ                             AS missionSeq,
+        A.WALLET_ADDR                             AS walletAddr,
+        A.DEVICE_ID                               AS deviceId,
+        A.INSERT_DT                               AS insertDt,
+        A.INSERT_ID                               AS insertId
+    </sql>
+
+    <sql id="fragment">
+        FROM RT_REWARD_DEVICE_INFO A
+        <where>
+            <trim prefixOverrides="AND|OR">
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(infoSeq)">
+                    AND A.INFO_SEQ = #{infoSeq}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(missionSeq)">
+                    AND A.MISSION_SEQ = #{missionSeq}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(walletAddr)">
+                    AND A.WALLET_ADDR = #{walletAddr}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(deviceId)">
+                    AND A.DEVICE_ID = #{deviceId}
+                </if>
+
+                AND A.INSERT_DT > DATE_SUB(NOW(), INTERVAL #{termDays} DAY )
+            </trim>
+        </where>
+    </sql>
+
+    <select id="get" parameterType="RewardDeviceEntity" resultType="RewardDeviceEntity">
+        SELECT /* RewardDeviceMapper.xml, get */
+        <include refid="io.returm.front.management.charge.mapper.RewardDeviceMapper.field" />
+        <include refid="io.returm.front.management.charge.mapper.RewardDeviceMapper.fragment" />
+    </select>
+
+    <!-- count - 카운트 -->
+    <select id="count" parameterType="RewardDeviceEntity" resultType="Integer">
+        SELECT /* RewardDeviceMapper.xml, count */
+        COUNT(1) AS CNT
+        <include refid="io.returm.front.management.charge.mapper.RewardDeviceMapper.fragment" />
+    </select>
+
+    <insert id="insert" parameterType="RewardDeviceEntity" useGeneratedKeys="true" keyProperty="infoSeq">
+        INSERT /* RewardDeviceMapper.xml, insert */
+            INTO RT_REWARD_DEVICE_INFO (
+              INFO_SEQ,
+              MISSION_SEQ,
+              WALLET_ADDR,
+              DEVICE_ID,
+              INSERT_DT,
+              INSERT_ID
+            ) VALUES (
+              #{infoSeq},
+              #{missionSeq},
+              #{walletAddr},
+              #{deviceId},
+              NOW(),
+              'SYSTEM'
+            )
+    </insert>
+
+</mapper>

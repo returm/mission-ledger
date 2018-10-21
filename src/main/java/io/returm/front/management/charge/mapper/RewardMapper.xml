@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.returm.front.management.charge.mapper.RewardMapper">
+
+    <sql id="field">
+        A.REWARD_SEQ                              AS rewardSeq,
+        A.REMOTE_SEQ                              AS remoteSeq,
+        A.TYPE                                    AS type,
+        A.SUB_TYPE                                AS subType,
+        A.WALLET_ADDR_FROM                        AS walletAddrFrom,
+        A.WALLET_ADDR_TO                          AS walletAddrTo,
+        A.CONTENTS                                AS contents,
+        A.POINT                                   AS point,
+        case (A.RESULT)
+          when 'success' then '성공'
+          when 'failure' then '실패'
+        else ''
+        end                                       AS result,
+        DATE_FORMAT(A.INSERT_DT, '%m-%d %h:%i')   AS insertDt,
+        A.INSERT_ID                               AS insertId,
+        A.UPDATE_DT                               AS updateDt,
+        A.UPDATE_ID                               AS updateId
+    </sql>
+
+    <sql id="fragment">
+        FROM RT_REWARD_INFO A
+        <where>
+            <trim prefixOverrides="AND|OR">
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(rewardSeq)">
+                    AND A.REWARD_SEQ = #{rewardSeq}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(remoteSeq)">
+                    AND A.REMOTE_SEQ = #{remoteSeq}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(subType)">
+                    AND A.SUB_TYPE = #{subType}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(type)">
+                    AND A.TYPE = #{type}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(walletAddrFrom)">
+                    AND A.WALLET_ADDR_FROM = #{walletAddrFrom}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(walletAddrTo)">
+                    AND A.WALLET_ADDR_TO = #{walletAddrTo}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(insertId)">
+                    AND A.INSERT_DT = #{insertId}
+                </if>
+            </trim>
+        </where>
+    </sql>
+
+    <select id="get" parameterType="RewardEntity" resultType="RewardEntity">
+        SELECT /* RewardMapper.xml, get */
+        <include refid="io.returm.front.management.charge.mapper.RewardMapper.field" />
+        <include refid="io.returm.front.management.charge.mapper.RewardMapper.fragment" />
+    </select>
+
+    <!-- list - 리스트 -->
+    <select id="getList" parameterType="RewardEntity" resultType="RewardEntity">
+        <include refid="Common.PagingStart" />
+            SELECT /* RewardMapper.xml, getList */
+                <include refid="io.returm.front.management.charge.mapper.RewardMapper.field" />
+                <include refid="io.returm.front.management.charge.mapper.RewardMapper.fragment" />
+            ORDER BY A.REWARD_SEQ DESC
+        <include refid="Common.PagingEnd" />
+    </select>
+
+    <!-- count - 카운트 -->
+    <select id="count" parameterType="RewardEntity" resultType="Integer">
+        SELECT /* RewardMapper.xml, count */
+            COUNT(1) AS CNT
+        <include refid="io.returm.front.management.charge.mapper.RewardMapper.fragment" />
+    </select>
+
+    <insert id="insert" parameterType="RewardEntity" useGeneratedKeys="true" keyProperty="rewardSeq">
+        INSERT /* RewardMapper.xml, insert */
+            INTO RT_REWARD_INFO (
+              REMOTE_SEQ,
+              TYPE,
+              SUB_TYPE,
+              MISSION_SEQ,
+              WALLET_ADDR_FROM,
+              WALLET_ADDR_TO,
+              CONTENTS,
+              POINT,
+              INSERT_DT,
+              INSERT_ID
+            ) VALUES (
+              #{remoteSeq},
+              #{type},
+              #{subType},
+              #{missionSeq},
+              #{walletAddrFrom},
+              #{walletAddrTo},
+              #{contents},
+              #{point},
+              NOW(),
+              'SYSTEM'
+            )
+    </insert>
+
+    <update id="updateResult" parameterType="RewardEntity">
+        UPDATE /* RewardMapper.xml, updateResult */
+              RT_REWARD_INFO
+        SET   RESULT = #{result},
+              UPDATE_ID = 'SYSTEM',
+              UPDATE_DT = NOW()
+        WHERE REWARD_SEQ = #{rewardSeq}
+    </update>
+
+</mapper>

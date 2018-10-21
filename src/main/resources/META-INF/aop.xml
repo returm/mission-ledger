@@ -1,0 +1,12 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+    <weaver>
+        <include within="io.returm.front..*"/>
+        <exclude within="io.returm.front..*CGLIB*"/>
+    </weaver>
+    <aspects>
+        <aspect name="io.returm.front.aspect.EntityAspect"/>
+        <aspect name="io.returm.front.aspect.LoggingAspect"/>
+        <aspect name="io.returm.front.aspect.StopWatchAspect"/>
+    </aspects>
+</aspectj>

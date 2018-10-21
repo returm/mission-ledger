@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.returm.front.management.mission.mapper.RecomMissionMapper">
+
+    <sql id="field">
+        A.MISSION_SEQ                             AS missionSeq,
+        A.MISSION_TYPE_CD                         AS missionTypeCd,
+        A.TITLE                                   AS title,
+        A.CONTENTS                                AS contents,
+        A.LINK_URL                                AS linkUrl,
+        A.REWARD_POINT                            AS rewardPoint,
+        A.IMAGE_FILE_SQ                           AS imageFileSq,
+        ( SELECT FILE_PATH
+          FROM CM_FILE_INFO
+          WHERE FILE_SQ = A.IMAGE_FILE_SQ )       AS imageFilePath,
+        A.DEL_YN                                  AS delYn,
+        DATE_FORMAT(A.INSERT_DT, '%Y-%m-%d')      AS insertDt,
+        A.INSERT_ID                               AS insertId,
+        A.UPDATE_DT                               AS updateDt,
+        A.UPDATE_ID                               AS updateId,
+        ( SELECT COUNT(0)
+          FROM RT_REWARD_INFO TAA
+          WHERE TAA.MISSION_SEQ = A.MISSION_SEQ
+        )                                         AS count
+    </sql>
+
+    <sql id="fragment">
+        FROM RT_MISSION_INFO A, RT_RECOM_MISSION_INFO B
+        <where>
+            <trim prefixOverrides="AND|OR">
+                AND A.MISSION_SEQ = B.MISSION_SEQ
+                AND B.USE_YN = 'Y'
+            </trim>
+        </where>
+    </sql>
+
+    <select id="getRecomMissionList" resultType="MissionEntity">
+        SELECT /* RecomMissionMapper.xml, getList */
+          <include refid="io.returm.front.management.mission.mapper.RecomMissionMapper.field" />
+          <include refid="io.returm.front.management.mission.mapper.RecomMissionMapper.fragment" />
+        ORDER BY A.MISSION_SEQ DESC
+        LIMIT 5
+    </select>
+
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.returm.front.management.charge.mapper.InstalledDeviceMapper">
+
+    <sql id="field">
+        A.DEVICE_SEQ                              AS deviceSeq,
+        A.REWARD_SEQ                              AS rewardSeq,
+        A.DEVICE_ID                               AS deviceId,
+        A.INSERT_DT                               AS insertDt,
+        A.INSERT_ID                               AS insertId,
+        A.UPDATE_DT                               AS updateDt,
+        A.UPDATE_ID                               AS updateId
+    </sql>
+
+    <sql id="fragment">
+        FROM RT_INSTALLED_DEVICE_INFO A
+        <where>
+            <trim prefixOverrides="AND|OR">
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(deviceSeq)">
+                    AND A.DEVICE_SEQ = #{deviceSeq}
+                </if>
+                AND ( A.DEVICE_ID = #{deviceId}
+                      OR A.GOOGLE_ID = #{googleId} )
+            </trim>
+        </where>
+    </sql>
+
+    <select id="get" parameterType="InstalledDeviceEntity" resultType="InstalledDeviceEntity">
+        SELECT /* InstalledDeviceMapper.xml, get */
+        <include refid="io.returm.front.management.charge.mapper.InstalledDeviceMapper.field" />
+        <include refid="io.returm.front.management.charge.mapper.InstalledDeviceMapper.fragment" />
+    </select>
+
+    <insert id="insert" parameterType="InstalledDeviceEntity">
+        INSERT /* InstalledDeviceMapper.xml, insert */
+            INTO RT_INSTALLED_DEVICE_INFO (
+              DEVICE_SEQ,
+              REWARD_SEQ,
+              DEVICE_ID,
+              GOOGLE_ID,
+              INSERT_DT,
+              INSERT_ID,
+              UPDATE_DT,
+              UPDATE_ID
+            ) VALUES (
+              #{deviceSeq},
+              #{rewardSeq},
+              #{deviceId},
+              #{googleId},
+              NOW(),
+              #{insertId},
+              null,
+              null
+            )
+    </insert>
+
+</mapper>

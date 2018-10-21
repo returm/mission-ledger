@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.returm.front.management.charge.mapper.RewardTemporarilyMapper">
+
+    <sql id="field">
+        A.TEMP_SEQ                                AS tempSeq,
+        A.MISSION_SEQ                             AS missionSeq,
+        A.WALLET_ADDR_TO                          AS walletAddrTo,
+        A.SEND_YN                                 AS sendYn,
+        A.INSERT_ID                               AS insertId,
+        A.INSERT_DT                               AS insertDt,
+        A.UPDATE_DT                               AS updateDt,
+        A.UPDATE_ID                               AS updateId
+    </sql>
+
+    <sql id="fragment">
+        FROM RT_REWARD_TEMPORARILY_INFO A
+        <where>
+            <trim prefixOverrides="AND|OR">
+
+                AND A.SEND_YN = 'N'
+
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(tempSeq)">
+                    AND A.TEMP_SEQ = #{tempSeq}
+                </if>
+
+            </trim>
+        </where>
+    </sql>
+
+    <select id="get" parameterType="RewardTemporarilyEntity" resultType="RewardTemporarilyEntity">
+        SELECT /* RewardTemporarilyMapper.xml, get */
+        <include refid="io.returm.front.management.charge.mapper.RewardTemporarilyMapper.field" />
+        <include refid="io.returm.front.management.charge.mapper.RewardTemporarilyMapper.fragment" />
+
+    </select>
+
+    <insert id="insert" parameterType="RewardTemporarilyEntity" useGeneratedKeys="true" keyProperty="tempSeq">
+        INSERT /* RewardTemporarilyMapper.xml, insert */
+            INTO RT_REWARD_TEMPORARILY_INFO (
+              TEMP_SEQ,
+              MISSION_SEQ,
+              WALLET_ADDR_TO,
+              SEND_YN,
+              INSERT_DT,
+              INSERT_ID
+            ) VALUES (
+              #{tempSeq},
+              #{missionSeq},
+              #{walletAddrTo},
+              'N',
+              NOW(),
+              'SYSTEM'
+            )
+    </insert>
+
+    <update id="update" parameterType="RewardTemporarilyEntity">
+        UPDATE /* RewardTemporarilyMapper.xml, update */
+              RT_REWARD_TEMPORARILY_INFO
+        SET   SEND_YN = #{sendYn},
+              UPDATE_ID = 'SYSTEM',
+              UPDATE_DT = NOW()
+        WHERE TEMP_SEQ = #{tempSeq}
+    </update>
+
+</mapper>

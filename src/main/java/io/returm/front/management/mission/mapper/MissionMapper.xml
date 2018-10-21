@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.returm.front.management.mission.mapper.MissionMapper">
+
+    <sql id="field">
+        A.MISSION_SEQ                             AS missionSeq,
+        A.MISSION_TYPE_CD                         AS missionTypeCd,
+        A.MISSION_SUB_TYPE_CD                     AS missionSubTypeCd,
+        A.TITLE                                   AS title,
+        A.CONTENTS                                AS contents,
+        A.LINK_URL                                AS linkUrl,
+        A.REWARD_POINT                            AS rewardPoint,
+        A.IMAGE_FILE_SQ                           AS imageFileSq,
+        ( SELECT FILE_PATH
+          FROM CM_FILE_INFO
+          WHERE FILE_SQ = A.IMAGE_FILE_SQ )       AS imageFilePath,
+        A.DEL_YN                                  AS delYn,
+        DATE_FORMAT(A.INSERT_DT, '%Y-%m-%d')      AS insertDt,
+        A.INSERT_ID                               AS insertId,
+        A.UPDATE_DT                               AS updateDt,
+        A.UPDATE_ID                               AS updateId,
+        ( SELECT COUNT(0)
+          FROM RT_REWARD_INFO
+          WHERE MISSION_SEQ = A.MISSION_SEQ
+        )                                         AS count
+    </sql>
+
+    <sql id="fragment">
+        FROM RT_MISSION_INFO A
+        <where>
+            <trim prefixOverrides="AND|OR">
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(missionSeq)">
+                    AND A.MISSION_SEQ = #{missionSeq}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(missionTypeCd)">
+                    AND A.MISSION_TYPE_CD = #{missionTypeCd}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(missionSubTypeCd)">
+                    AND A.MISSION_SUB_TYPE_CD = #{missionSubTypeCd}
+                </if>
+                <if test="@org.apache.commons.lang.StringUtils@isNotEmpty(insertId)">
+                    AND A.INSERT_ID = #{insertId}
+                </if>
+
+                AND DEL_YN = 'N'
+
+            </trim>
+        </where>
+    </sql>
+
+    <select id="get" parameterType="MissionEntity" resultType="MissionEntity">
+        SELECT /* MissionMapper.xml, get */
+        <include refid="io.returm.front.management.mission.mapper.MissionMapper.field" />
+        <include refid="io.returm.front.management.mission.mapper.MissionMapper.fragment" />
+    </select>
+
+    <!-- list - 리스트 -->
+    <select id="getList" parameterType="MissionEntity" resultType="MissionEntity">
+        <include refid="Common.PagingStart" />
+            SELECT /* MissionMapper.xml, getList */
+              <include refid="io.returm.front.management.mission.mapper.MissionMapper.field" />
+              <include refid="io.returm.front.management.mission.mapper.MissionMapper.fragment" />
+            ORDER BY A.MISSION_SEQ DESC
+        <include refid="Common.PagingEnd" />
+    </select>
+
+    <!-- all list - 전체 리스트 -->
+    <select id="getAllList" parameterType="MissionEntity" resultType="MissionEntity">
+        SELECT /* MissionEntity.xml, getAllList */
+          <include refid="io.returm.front.management.mission.mapper.MissionMapper.field" />
+          <include refid="io.returm.front.management.mission.mapper.MissionMapper.fragment" />
+        ORDER BY A.MISSION_SEQ DESC
+    </select>
+
+    <!-- count - 카운트 -->
+    <select id="count" parameterType="MissionEntity" resultType="Integer">
+        SELECT /* MissionEntity.xml, count */
+          COUNT(1) AS CNT
+        <include refid="io.returm.front.management.mission.mapper.MissionMapper.fragment" />
+    </select>
+
+    <!-- insert - 저장 -->
+    <insert id="insert" parameterType="MissionEntity">
+        INSERT /* MissionEntity.xml, insert */
+        INTO RT_MISSION_INFO (
+            MISSION_TYPE_CD,
+            TITLE,
+            CONTENTS,
+            LINK_URL,
+            REWARD_POINT,
+            IMAGE_FILE_SQ,
+            INSERT_DT,
+            INSERT_ID,
+            UPDATE_DT,
+            UPDATE_ID
+        ) VALUES (
+            #{missionTypeCd},
+            #{title},
+            #{contents},
+            #{linkUrl},
+            #{rewardPoint},
+            #{imageFileSq},
+            NOW(),
+            'SYSTEM',
+            NOW(),
+            'SYSTEM'
+        )
+    </insert>
+
+    <select id="getNewMissionList" resultType="MissionEntity">
+        /* MissionMapper.xml, getNewMissionList */
+        (
+            SELECT
+            <include refid="io.returm.front.management.mission.mapper.MissionMapper.field"/>
+            FROM RT_MISSION_INFO A
+            WHERE A.DEL_YN = 'N'
+            AND A.MISSION_TYPE_CD = '110'
+            ORDER BY A.INSERT_DT DESC
+            LIMIT 3
+        )
+        UNION
+        (
+            SELECT
+            <include refid="io.returm.front.management.mission.mapper.MissionMapper.field"/>
+            FROM RT_MISSION_INFO A
+            WHERE A.DEL_YN = 'N'
+            AND A.MISSION_TYPE_CD = '160'
+            ORDER BY A.INSERT_DT DESC
+            LIMIT 3
+        )
+        UNION
+        (
+            SELECT
+            <include refid="io.returm.front.management.mission.mapper.MissionMapper.field"/>
+            FROM RT_MISSION_INFO A
+            WHERE A.DEL_YN = 'N'
+            AND A.MISSION_TYPE_CD = '170'
+            ORDER BY A.INSERT_DT DESC
+            LIMIT 3
+        )
+        UNION
+        (
+            SELECT
+            <include refid="io.returm.front.management.mission.mapper.MissionMapper.field"/>
+            FROM RT_MISSION_INFO A
+            WHERE A.DEL_YN = 'N'
+            AND A.MISSION_TYPE_CD = '180'
+            ORDER BY A.INSERT_DT DESC
+            LIMIT 3
+        )
+        UNION
+        (
+            SELECT
+            <include refid="io.returm.front.management.mission.mapper.MissionMapper.field"/>
+            FROM RT_MISSION_INFO A
+            WHERE A.DEL_YN = 'N'
+            AND A.MISSION_TYPE_CD = '900'
+            ORDER BY A.INSERT_DT DESC
+            LIMIT 3
+        )
+        UNION
+        (
+        SELECT
+            <include refid="io.returm.front.management.mission.mapper.MissionMapper.field"/>
+            FROM RT_MISSION_INFO A
+            WHERE A.DEL_YN = 'N'
+            AND A.MISSION_TYPE_CD = '140'
+            ORDER BY A.INSERT_DT DESC
+            LIMIT 3
+        )
+        UNION
+        (
+            SELECT
+            <include refid="io.returm.front.management.mission.mapper.MissionMapper.field"/>
+            FROM RT_MISSION_INFO A
+            WHERE A.DEL_YN = 'N'
+            AND A.MISSION_TYPE_CD = '150'
+            ORDER BY A.INSERT_DT DESC
+            LIMIT 3
+        )
+        UNION
+        (
+            SELECT
+            <include refid="io.returm.front.management.mission.mapper.MissionMapper.field"/>
+            FROM RT_MISSION_INFO A
+            WHERE A.DEL_YN = 'N'
+            AND A.MISSION_TYPE_CD = '130'
+            ORDER BY A.INSERT_DT DESC
+            LIMIT 3
+        )
+        UNION
+        (
+            SELECT
+            <include refid="io.returm.front.management.mission.mapper.MissionMapper.field"/>
+            FROM RT_MISSION_INFO A
+            WHERE A.DEL_YN = 'N'
+            AND A.MISSION_TYPE_CD = '120'
+            ORDER BY A.INSERT_DT DESC
+            LIMIT 3
+        )
+    </select>
+
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- configuration file for LogBack (slf4J implementation) See here for more
+	details: http://gordondickens.com/wordpress/2013/03/27/sawing-through-the-java-loggers/ -->
+
+<configuration scan="true" scanPeriod="30 seconds">
+
+	<property resource="properties/logback.properties" />
+
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
+
+	<!-- Shutdown Hook -->
+	<shutdownHook />
+
+	<!-- To enable JMX Management -->
+	<jmxConfigurator />
+
+	<!-- Appenders -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${logback.appenter.encoder.pattern}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- RollingFile Appender -->
+	<appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logback.appender.rollingFile.file}</file>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logback.appender.rollingFile.fileNamePattern}</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${logback.appender.rollingFile.maxFileSize}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${logback.appender.rollingFile.maxHistory}</maxHistory>
+		</rollingPolicy>
+
+		<encoder>
+			<pattern>${logback.appenter.encoder.pattern}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 3rdparty Loggers -->
+	<logger name="org.springframework">
+		<level value='${logback.logLevel.spring}' />
+	</logger>
+
+	<logger name="org.springframework.core">
+		<level value='${logback.logLevel.spring}' />
+	</logger>
+
+	<logger name="org.springframework.messaging">
+		<level value='${logback.logLevel.spring}' />
+	</logger>
+
+	<logger name="org.springframework.beans">
+		<level value="${logback.logLevel.spring}" />
+	</logger>
+
+	<logger name="org.springframework.context">
+		<level value='${logback.logLevel.spring}' />
+	</logger>
+
+	<logger name="org.springframework.web">
+		<level value='${logback.logLevel.spring}' />
+	</logger>
+
+	<!-- APACHE -->
+	<logger name="org.apache">
+		<level value="INFO" />
+	</logger>
+
+	<!-- SQL -->
+	<logger name="java.sql">
+		<level value="DEBUG" />
+	</logger>
+
+	<!-- JDBC Logger -->
+	<logger name="jdbc.sqlonly">
+		<level value="DEBUG" />
+		<appender-ref ref="ROLLING_FILE" />
+	</logger>
+
+	<logger name="jdbc.resultsettable">
+		<level value="DEBUG" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="jdbc.connection">
+		<level value="WARN" />
+	</logger>
+
+	<logger name="jdbc.resultset">
+		<level value="WARN" />
+	</logger>
+
+	<logger name="jdbc.sqltiming">
+		<level value="WARN" />
+	</logger>
+
+	<logger name="jdbc.audit">
+		<level value="WARN" />
+	</logger>
+
+	<!-- MyBatis -->
+	<logger name="org.mybatis">
+		<level value="DEBUG" />
+	</logger>
+
+	<!-- Application Logger -->
+	<logger name="io.returm.front">
+		<level value='${logback.logLevel.default}' />
+		<appender-ref ref="ROLLING_FILE" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<!-- Root Logger -->
+	<root level='${logback.logLevel.default}'>
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>
